@@ -1,2 +1,2 @@
-# Advanced React & GraphQL
+# Advanced React & GraphQL(GraphQL Yoga, Prisma)
 
