@@ -80,6 +80,12 @@ async deleteItem(parent, args, ctx, info) {
     })
     // return user
     return user;
+  },
+  signout(parent, args, ctx, info){
+    ctx.response.clearCookie('token');
+    return {
+      message : "Good Bye!"
+    }
   }
 };
 
