@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken');
 
 const mutations = {
   async createItem(parent, args, ctx, info) {
-    // TODO if they are loggedIn
+    // TODO if the user are loggedIn
     const item = await ctx.db.mutation.createItem({
       data: {
         ...args
