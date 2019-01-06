@@ -102,8 +102,7 @@ async deleteItem(parent, args, ctx, info) {
      const res = await ctx.db.mutation.updateUser({
        where:{ email : args.email },
        data: { resetToken , resetTokenExpiry}
-     })
-     console.log(res)
+     });
      return { message : "Thanks!"}
      // Email them that reset token
 
@@ -120,7 +119,7 @@ async deleteItem(parent, args, ctx, info) {
          resetToken: args.resetToken,
          resetTokenExpiry_gte: Date.now() - 3600000
        }
-     })
+     });
      if(!user){
        throw new Error('This token is either invalid or expired!');
      }
