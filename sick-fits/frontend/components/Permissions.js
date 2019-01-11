@@ -30,6 +30,7 @@ const Permissions = props => (
       <div>
         <Error error={error} />
         <div>
+          {/* added check which is not in tutorials code */}
           {data.users && (
             <>
               <h2>Manage Permissions</h2>
