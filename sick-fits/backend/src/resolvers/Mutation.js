@@ -180,13 +180,14 @@ async deleteItem(parent, args, ctx, info) {
            id: ctx.request.userId,
          },
        },
+       info
      );
      // 3 check if the have permission to do this
      hasPermission(currentUser, ['ADMIN', 'PERMISSIONUPDATE'])
      //4 Update the permissions
      return ctx.db.mutation.updateUser({
        data:{
-         permission: {
+         permissions: {
            set: args.permissions,
          },
        },
