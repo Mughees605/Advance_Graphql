@@ -218,7 +218,7 @@ async deleteItem(parent, args, ctx, info) {
     });
     // 3 . check if that item is already in their cart and increment by 1 if it is
     if(existingCartItem){
-       return ctx.db.query.updateCartItem({
+       return ctx.db.mutation.updateCartItem({
          where:{
            id: existingCartItem.id,
          },
