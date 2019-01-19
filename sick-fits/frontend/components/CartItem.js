@@ -19,23 +19,28 @@ const CartItemStyles = styled.li`
   }
 `;
 
-const CartItem = ({cartItem}) => (
-  <CartItemStyles>
+const CartItem = ({cartItem}) =>{
+  if (!cartItem.item) return <p>The Item is deleted <RemoveFromCart id={cartItem.id}/> </p>
+  return (
+    (
+      <CartItemStyles>
 
-    <img width="100" src={cartItem.item.image} alt={cartItem.item.title} />
-    <div className="cart-item-details">
-      <h3>{cartItem.item.title}</h3>
-      <p>
-        {formatMoney(cartItem.item.price * cartItem.quantity)}
-        {' - '}
-        <em>
-          {cartItem.quantity} &times; {formatMoney(cartItem.item.price)} each
-        </em>
-      </p>
-    </div>
-    <RemoveFromCart id={cartItem.id}/>
-  </CartItemStyles>
-)
+        <img width="100" src={cartItem.item.image} alt={cartItem.item.title} />
+        <div className="cart-item-details">
+          <h3>{cartItem.item.title}</h3>
+          <p>
+            {formatMoney(cartItem.item.price * cartItem.quantity)}
+            {' - '}
+            <em>
+              {cartItem.quantity} &times; {formatMoney(cartItem.item.price)} each
+            </em>
+          </p>
+        </div>
+        <RemoveFromCart id={cartItem.id}/>
+      </CartItemStyles>
+    )
+  )
+}
 
 CartItem.propTypes = {
   cartItem: PropTypes.shape({
