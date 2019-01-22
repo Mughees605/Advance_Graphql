@@ -4,7 +4,7 @@ const { randomBytes } = require('crypto');
 const { promisify } = require('util');
 const { transport , makeANiceEmail } = require('./../mail');
 const { hasPermission } = require("./../utils");
-
+const stripe = require('./../stripe');
 
 const mutations = {
   async createItem(parent, args, ctx, info) {
@@ -257,6 +257,67 @@ async deleteItem(parent, args, ctx, info) {
       }
     }, info)
   },
+  async createOrder(parent, args, ctx, info){
+    //1 Query the current user and make sure the are signed in
+    const { userId } = ctx.request;
+    if(!userId){
+      throw new Error('You must be signed in!')
+    }
+    const user = await ctx.db.query.user({ where : { id: userId }},`
+     {
+      id
+      email
+      name
+      cart {
+        id
+        quantity
+        item {
+          title
+          price
+          description
+          id
+          image
+          largeImage
+        }}}
+    `)
+
+    //2 we need to re calculate the total for the price
+    const amount = user.cart.reduce((tally, cartItem) => tally + cartItem.item.price * cartItem.quantity, 0);
+    //3 create the stripe charge turn token received from client to money
+    const charge = await stripe.charges.create({
+      amount,
+      currency: 'USD',
+      source: args.token,
+    })
+    //4 convert the cartItems to Orders Items
+    const orderItems = user.cart.map(cartItem => {
+      const orderItem = {
+        ...cartItem.item,
+        quantity: cartItem.quantity,
+        user:{ connect: { id: userId } },
+      }
+      delete orderItem.id;
+      return orderItem;
+    });
+    //5 create the order
+    const order = await ctx.db.mutation.createOrder({
+      data:{
+        total: charge.amount,
+        charge: charge.id,
+        items: { create: orderItems },
+        user: { connect: { id: userId } },
+      }
+    })
+    //6 clear the users cart. delete cart items
+    const cartItemIds = user.cart.map(cartItem => cartItem.id);
+    await ctx.db.mutation.deleteManyCartItems({
+      where:{
+        id_in: cartItemIds
+      }
+    })
+    //7 return the order to client
+    return order
+  }
 };
 
 module.exports = mutations;
