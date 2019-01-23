@@ -49,7 +49,7 @@ const Query = {
     return order;
   },
   async orders(parent, args, ctx, info) {
-    console.log(info)
+   
     //1 Make sure loggedIn
     if (!ctx.request.userId) {
       throw new Error("You must be logged in!")
