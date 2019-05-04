@@ -26,9 +26,18 @@ const mutations = {
 
     return item;
   },
-  updateItem(parent, args, ctx, info) {
+  async updateItem(parent, args, ctx, info) {
     // first take copy of updates
     const updates = { ...args };
+    // find the item
+    const item = await ctx.db.query.item({ where: { id: updates.id } }, `{  id  title user { id } }`);
+    const ownsItem = item.user.id === ctx.request.userId;
+    const hasPermission = ctx.request.user.permissions.some(
+      (permission) => ['ADMIN','ITEMUPDATE'].includes(permission)
+    )
+    if(!ownsItem || !hasPermission){
+      throw new Error("You don't have permission to do that!")
+    }
     delete updates.id;
     return ctx.db.mutation.updateItem({
       data: updates,
