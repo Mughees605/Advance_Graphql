@@ -7,6 +7,7 @@ import PriceTag from './styles/PriceTag';
 import formatMoney from '../lib/formatMoney';
 import DeleteItem from './DeleteItem';
 import AddToCart from './AddToCart';
+import User from './User';
 
 export default class Item extends Component {
   static propTypes = {
@@ -33,18 +34,27 @@ export default class Item extends Component {
         <p>{item.description}</p>
 
         <div className="buttonList">
-          <Link
-            href={{
-              pathname: 'update',
-              query: { id: item.id },
-            }}
-          >
-            <a>Edit ✏️</a>
-          </Link>
-          <AddToCart id={item.id}/>
-          <DeleteItem id={item.id}>
-            Delete This Item
-          </DeleteItem>
+
+          <AddToCart id={item.id} />
+          <User>
+            {({ data: { me } }) => (
+              me && (
+                <>
+                  <Link
+                    href={{
+                      pathname: 'update',
+                      query: { id: item.id },
+                    }}
+                  >
+                    <a>Edit ✏️</a>
+                  </Link>
+                  <DeleteItem id={item.id}>
+                    Delete This Item
+                </DeleteItem>
+                </>
+              )
+            )}
+          </User>
         </div>
       </ItemStyles>
     );
